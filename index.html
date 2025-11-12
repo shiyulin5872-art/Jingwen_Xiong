@@ -1029,3 +1029,19 @@ Solo performance | Chamber music ensemble performance | Teaching practice
     
     // Animate Elements on Scroll
     const animateOnScroll =
+
+function toggleCollapse(header) {
+  const content = header.nextElementSibling;     // 找到对应的展开内容区域
+  const icon = header.querySelector('i.fa-chevron-down');
+
+  content.classList.toggle("active");
+
+  // 箭头动画
+  if (content.classList.contains("active")) {
+    icon.style.transform = "rotate(180deg)";
+  } else {
+    icon.style.transform = "rotate(0deg)";
+  }
+}
+</script>
+
