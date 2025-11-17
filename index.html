@@ -1124,13 +1124,21 @@ function toggleCollapse(header) {
 // 暴露到全局以兼容已有的 inline onclick（如果还保留的话）
 window.toggleCollapse = toggleCollapse;
 
-// 事件委托：点击任意 .collapse-header 都能触发（更稳）
+// 事件委托（已改进）：仅在没有内联 onclick 时才使用委托，且不会阻止内部可交互元素默认行为
 document.addEventListener('click', (e) => {
   const header = e.target.closest('#experience .collapse-header');
-  if (header) {
-    e.preventDefault();
-    toggleCollapse(header);
-  }
+  if (!header) return;
+
+  // 如果 header 元素上存在内联 onclick（例如 onclick="toggleCollapse(this)"），
+  // 我们不使用委托以避免双次切换（保留原有内联行为）。
+  if (header.hasAttribute('onclick')) return;
+
+  // 如果点击在 header 内的可交互元素（链接、按钮、表单控件），不要拦截默认行为
+  if (e.target.closest('a, button, input, textarea, select')) return;
+
+  // 阻止默认（避免例如某些嵌套锚点的跳转），然后触发折叠切换
+  e.preventDefault();
+  toggleCollapse(header);
 });
 
 // 首次渲染时把所有折叠块的 maxHeight 设为 0，确保状态干净
